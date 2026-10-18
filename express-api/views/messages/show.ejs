@@ -1,0 +1,30 @@
+<%- include("../partials/header", { title: profile.name }) %>
+<%- include("../partials/navbar") %>
+
+<main class="page chat-page">
+    <div class="chat-header">
+        <a class="btn-link" href="/messages">← Quay lại</a>
+        <span class="avatar-mini" style="background:<%= profile.color %>"><%= profile.initials %></span>
+        <span class="chat-name"><%= profile.name %></span>
+    </div>
+
+    <div class="chat-messages">
+        <% if (messages.length === 0) { %>
+            <p class="empty-state">Hãy gửi lời chào đầu tiên tới <%= profile.name %>!</p>
+        <% } %>
+
+        <% messages.forEach(function(msg) { %>
+            <div class="chat-bubble-row <%= msg.sender === 'me' ? 'me' : 'them' %>">
+                <div class="chat-bubble"><%= msg.text %></div>
+                <span class="chat-time"><%= msg.time %></span>
+            </div>
+        <% }) %>
+    </div>
+
+    <form class="chat-input" action="/messages/<%= profile.id %>" method="POST">
+        <input type="text" name="text" placeholder="Nhập tin nhắn..." autocomplete="off" required>
+        <button class="btn-primary" type="submit">Gửi</button>
+    </form>
+</main>
+
+<%- include("../partials/footer") %>

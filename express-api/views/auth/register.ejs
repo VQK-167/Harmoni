@@ -1,0 +1,54 @@
+<%- include("../partials/header", { title: "Đăng ký" }) %>
+<%- include("../partials/navbar") %>
+
+<main class="page auth-page">
+    <form class="auth-card" action="/register" method="POST">
+        <h1>Tạo tài khoản</h1>
+
+        <% if (error) { %>
+            <p class="error-text"><%= error %></p>
+        <% } %>
+
+        <div class="form-group">
+            <label>Họ và tên</label>
+            <input type="text" name="fullname" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Tuổi</label>
+                <input type="number" name="age" min="18" required>
+            </div>
+
+            <div class="form-group">
+                <label>Giới tính</label>
+                <select name="gender">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Thành phố</label>
+            <input type="text" name="city" placeholder="Hà Nội">
+        </div>
+
+        <div class="form-group">
+            <label>Tài khoản</label>
+            <input type="text" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mật khẩu</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <button class="btn-primary" type="submit">Đăng ký</button>
+
+        <p class="auth-switch">Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
+    </form>
+</main>
+
+<%- include("../partials/footer") %>

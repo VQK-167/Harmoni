@@ -1,0 +1,22 @@
+<%- include("../partials/header", { title: "Hồ sơ của tôi" }) %>
+<%- include("../partials/navbar") %>
+
+<main class="page">
+    <div class="profile-card">
+        <span class="avatar-lg avatar-xl" style="background:<%= profile.color %>"><%= profile.initials %></span>
+
+        <h1><%= profile.fullname %>, <%= profile.age %></h1>
+        <p class="swipe-card-city">📍 <%= profile.city %></p>
+        <p class="swipe-card-bio"><%= profile.bio %></p>
+
+        <div class="tag-list">
+            <% profile.interests.forEach(function(tag) { %>
+                <span class="tag"><%= tag %></span>
+            <% }) %>
+        </div>
+
+        <a class="btn-primary" href="/profile/edit">Chỉnh sửa hồ sơ</a>
+    </div>
+</main>
+
+<%- include("../partials/footer") %>

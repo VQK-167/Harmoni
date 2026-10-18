@@ -1,0 +1,26 @@
+<%- include("partials/header", { title: "LoveApp - Trang chủ" }) %>
+<%- include("partials/navbar") %>
+
+<main class="page hero">
+    <section class="hero-content">
+        <h1>Tìm một người để cùng viết tiếp câu chuyện 💕</h1>
+        <p>LoveApp giúp bạn kết nối với những người phù hợp gần bạn. Vuốt phải để thích, vuốt trái để bỏ qua.</p>
+
+        <% if (user) { %>
+            <a class="btn-primary" href="/discover">Bắt đầu khám phá</a>
+        <% } else { %>
+            <div class="hero-actions">
+                <a class="btn-primary" href="/register">Tạo tài khoản</a>
+                <a class="btn-outline" href="/login">Đăng nhập</a>
+            </div>
+        <% } %>
+    </section>
+
+    <section class="hero-card-stack">
+        <div class="demo-card" style="background:#9b5cff">ND</div>
+        <div class="demo-card" style="background:#3aa0ff">HL</div>
+        <div class="demo-card" style="background:#ff5c77">MA</div>
+    </section>
+</main>
+
+<%- include("partials/footer") %>

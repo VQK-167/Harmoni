@@ -1,0 +1,95 @@
+/* =========================================================================
+   auth.css — Trang chủ (landing), Đăng ký, Đăng nhập
+   ========================================================================= */
+
+/* ---------- Header công khai (chưa đăng nhập) ---------- */
+.public-header {
+  background: rgba(248, 247, 252, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--hm-border);
+  position: sticky; top: 0; z-index: 1030;
+}
+.public-header .nav-link { font-weight: 600; color: var(--hm-text-primary); }
+.public-header .nav-link:hover { color: var(--hm-primary); }
+
+/* ---------- Hero ---------- */
+.hero-section {
+  background: radial-gradient(1200px 500px at 85% -10%, #f3e8ff 0%, transparent 60%),
+              radial-gradient(900px 500px at 5% 10%, #fde3f0 0%, transparent 55%);
+  padding: 5rem 0 4rem;
+  overflow: hidden;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: #fff; border: 1px solid var(--hm-border);
+  border-radius: 999px; padding: .45rem 1rem; font-weight: 700; font-size: .85rem;
+  box-shadow: var(--hm-shadow-sm); color: var(--hm-primary);
+}
+.hero-title { font-size: 3rem; line-height: 1.12; }
+.hero-illustration {
+  position: relative; border-radius: var(--hm-radius-lg);
+  background: var(--hm-gradient); padding: 2px; box-shadow: var(--hm-shadow-lg);
+}
+.hero-illustration-inner {
+  border-radius: calc(var(--hm-radius-lg) - 2px);
+  background: #fff; padding: 2.2rem; height: 100%;
+}
+.hero-float-card {
+  position: absolute; background: #fff; border-radius: var(--hm-radius-md);
+  box-shadow: var(--hm-shadow-lg); padding: .9rem 1.1rem; display: flex; align-items: center; gap: .7rem;
+  font-weight: 700; font-size: .85rem; animation: floatCard 4s ease-in-out infinite;
+}
+@keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.hero-float-card.card-top { top: -18px; left: -24px; }
+.hero-float-card.card-bottom { bottom: -18px; right: -24px; animation-delay: .6s; }
+.hero-float-card .icon-circle {
+  width: 38px; height: 38px; border-radius: 50%; background: var(--hm-gradient);
+  color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+
+/* ---------- 3 bước ---------- */
+.step-card { text-align: center; padding: 2rem 1.5rem; height: 100%; }
+.step-number {
+  width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 1.2rem;
+  background: var(--hm-gradient); color: #fff; font-weight: 800; font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center; box-shadow: var(--hm-shadow-md);
+}
+
+/* ---------- Feature cards ---------- */
+.feature-card { padding: 2rem 1.6rem; height: 100%; }
+.feature-icon {
+  width: 54px; height: 54px; border-radius: var(--hm-radius-sm);
+  background: #f3eefd; color: var(--hm-primary); font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 1.1rem;
+}
+
+/* ---------- CTA band ---------- */
+.cta-band { background: var(--hm-gradient); border-radius: var(--hm-radius-lg); color: #fff; padding: 3rem 2rem; }
+
+/* ---------- Auth split layout (login / register) ---------- */
+.auth-wrapper { min-height: 100vh; display: flex; }
+.auth-visual {
+  flex: 1 1 44%; background: var(--hm-gradient); color: #fff;
+  display: flex; flex-direction: column; justify-content: center; padding: 3.5rem;
+  position: relative; overflow: hidden;
+}
+.auth-visual::before, .auth-visual::after {
+  content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,0.12);
+}
+.auth-visual::before { width: 260px; height: 260px; top: -80px; right: -80px; }
+.auth-visual::after { width: 180px; height: 180px; bottom: -60px; left: -40px; }
+.auth-visual .quote { font-size: 1.4rem; font-weight: 700; line-height: 1.4; position: relative; z-index: 1; }
+.auth-form-side {
+  flex: 1 1 56%; display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem;
+  background: var(--hm-surface);
+}
+.auth-card { width: 100%; max-width: 440px; }
+.auth-demo-hint {
+  background: #f3eefd; border: 1px dashed var(--hm-primary);
+  border-radius: var(--hm-radius-sm); padding: .8rem 1rem; font-size: .85rem; color: var(--hm-primary);
+}
+
+@media (max-width: 991.98px) {
+  .auth-visual { display: none; }
+  .auth-form-side { flex: 1 1 100%; }
+}

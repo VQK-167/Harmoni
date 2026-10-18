@@ -1,0 +1,23 @@
+<header class="topbar">
+    <a class="brand" href="/">💘 LoveApp</a>
+
+    <% if (user) { %>
+        <nav class="main-nav">
+            <a href="/discover">Khám phá</a>
+            <a href="/matches">Match</a>
+            <a href="/messages">Tin nhắn</a>
+            <a href="/profile">Hồ sơ</a>
+        </nav>
+
+        <div class="nav-user">
+            <span class="avatar-mini" style="background:<%= user.color %>"><%= user.initials %></span>
+            <span class="nav-username"><%= user.fullname %></span>
+            <a class="btn-link" href="/logout">Đăng xuất</a>
+        </div>
+    <% } else { %>
+        <nav class="main-nav">
+            <a href="/login">Đăng nhập</a>
+            <a class="btn-primary-sm" href="/register">Đăng ký</a>
+        </nav>
+    <% } %>
+</header>

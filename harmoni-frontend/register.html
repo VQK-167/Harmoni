@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký – Harmoni</title>
+  <link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/auth.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <div class="auth-visual">
+      <a href="index.html" class="harmoni-logo mb-5" style="filter:brightness(0) invert(1);">
+        <img src="assets/images/logo.svg" alt="Harmoni">
+      </a>
+      <p class="quote">"Chạm vào sự đồng điệu – Kết nối những trái tim."</p>
+      <p class="text-white-75 mt-3">Tham gia Harmoni để khám phá những người thực sự phù hợp với bạn, dựa trên sở thích và mục đích kết nối thật sự.</p>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="auth-card">
+        <a href="index.html" class="harmoni-logo d-lg-none mb-4"><img src="assets/images/logo.svg" alt="Harmoni"></a>
+        <h3>Tạo tài khoản Harmoni</h3>
+        <p class="mb-4">Chỉ mất một phút để bắt đầu kết nối.</p>
+
+        <div id="registerAlert" class="alert d-none" role="alert"></div>
+
+        <form id="registerForm" novalidate>
+          <div class="form-group-hm mb-3">
+            <label class="form-label" for="regEmail">Email</label>
+            <input type="email" class="form-control" id="regEmail" placeholder="ten@email.com" required>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <div class="form-group-hm mb-3">
+            <label class="form-label" for="regPassword">Mật khẩu</label>
+            <div class="password-field">
+              <input type="password" class="form-control" id="regPassword" placeholder="Tối thiểu 6 ký tự" required>
+              <button type="button" class="password-toggle-btn" data-toggle-password="regPassword">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <div class="form-group-hm mb-3">
+            <label class="form-label" for="regConfirmPassword">Xác nhận mật khẩu</label>
+            <div class="password-field">
+              <input type="password" class="form-control" id="regConfirmPassword" placeholder="Nhập lại mật khẩu" required>
+              <button type="button" class="password-toggle-btn" data-toggle-password="regConfirmPassword">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+            <div class="invalid-feedback"></div>
+          </div>
+
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="regTerms">
+            <label class="form-check-label small" for="regTerms">
+              Tôi xác nhận đã đủ 18 tuổi và đồng ý với <a href="#">Điều khoản sử dụng</a> của Harmoni.
+            </label>
+            <div class="small text-danger mt-1 d-none" id="termsError">Vui lòng đồng ý với điều khoản sử dụng để tiếp tục.</div>
+          </div>
+
+          <button type="submit" class="btn btn-gradient w-100 btn-lg">Tạo tài khoản</button>
+        </form>
+
+        <p class="text-center mt-4 mb-0">
+          Đã có tài khoản? <a href="login.html" class="fw-bold">Đăng nhập ngay</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script>
+    HarmoniAuth.initRegisterForm();
+  </script>
+</body>
+</html>

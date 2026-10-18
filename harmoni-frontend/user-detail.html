@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết hồ sơ – Harmoni</title>
+  <link rel="icon" href="assets/images/logo.svg" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css">
+  <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body>
+
+  <div class="app-shell">
+    <div class="sidebar-overlay" data-sidebar-overlay></div>
+    <aside class="sidebar">
+      <a href="discover.html" class="harmoni-logo"><img src="assets/images/logo.svg" alt="Harmoni"></a>
+      <nav class="sidebar-nav">
+        <a href="discover.html" class="nav-item-hm" data-nav="discover"><i class="bi bi-compass"></i> Khám phá</a>
+        <a href="matches.html" class="nav-item-hm" data-nav="matches"><i class="bi bi-heart"></i> Kết nối của tôi</a>
+        <a href="messages.html" class="nav-item-hm" data-nav="messages"><i class="bi bi-chat-dots"></i> Tin nhắn</a>
+        <a href="profile.html" class="nav-item-hm" data-nav="profile"><i class="bi bi-person-circle"></i> Hồ sơ cá nhân</a>
+        <a href="settings.html" class="nav-item-hm" data-nav="settings"><i class="bi bi-gear"></i> Cài đặt</a>
+      </nav>
+      <div class="sidebar-user-card">
+        <img data-current-user-avatar src="assets/images/default-avatar.svg" alt="">
+        <div class="name" data-current-user-name>Người dùng</div>
+        <a href="#" class="btn-ghost-hm ms-auto p-2" data-action="logout" title="Đăng xuất"><i class="bi bi-box-arrow-right"></i></a>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-topbar">
+        <div class="d-flex align-items-center gap-2">
+          <button class="sidebar-toggle-btn" data-action="toggle-sidebar"><i class="bi bi-list"></i></button>
+          <a href="discover.html" class="btn btn-ghost-hm p-2"><i class="bi bi-arrow-left"></i></a>
+          <h1 class="page-title">Chi tiết hồ sơ</h1>
+        </div>
+        <div class="dropdown topbar-user-menu">
+          <a href="#" class="d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+            <img data-current-user-avatar src="assets/images/default-avatar.svg" alt="">
+            <span class="fw-bold d-none d-sm-inline" data-current-user-name>Người dùng</span>
+            <i class="bi bi-chevron-down small"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Hồ sơ cá nhân</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" data-action="logout"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</a></li>
+          </ul>
+        </div>
+      </header>
+
+      <main class="app-content" id="userDetailRoot">
+
+        <div class="empty-state d-none" id="udNotFound">
+          <div class="empty-icon"><i class="bi bi-person-x"></i></div>
+          <h5>Không tìm thấy hồ sơ này</h5>
+          <p>Hồ sơ có thể không tồn tại hoặc không còn hiển thị với bạn.</p>
+          <a href="discover.html" class="btn btn-gradient mt-2">Quay lại Khám phá</a>
+        </div>
+
+        <div id="udContent" class="row g-4">
+          <div class="col-lg-7 mx-auto">
+            <div class="detail-card card-hm fade-in-up">
+              <div class="detail-cover"></div>
+              <div class="px-4 pb-4">
+                <div class="d-flex justify-content-between align-items-end">
+                  <div class="detail-avatar-wrap">
+                    <img id="udAvatar" src="assets/images/default-avatar.svg" alt="">
+                  </div>
+                  <div class="dropdown mt-2">
+                    <button class="btn btn-ghost-hm" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#udBlockModal"><i class="bi bi-slash-circle me-2"></i>Chặn người này</a></li>
+                      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#udReportModal"><i class="bi bi-flag me-2"></i>Báo cáo người này</a></li>
+                    </ul>
+                  </div>
+                </div>
+
+                <h4 class="mt-3 mb-0" id="udNameAge">—</h4>
+                <p class="text-secondary-hm mb-3"><i class="bi bi-geo-alt me-1"></i><span id="udCity">—</span></p>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <span class="badge-hm badge-similarity"><i class="bi bi-stars me-1"></i>Độ tương đồng: <span id="udSimilarity">0%</span></span>
+                  <span class="badge-hm badge-purpose" id="udPurpose">—</span>
+                </div>
+
+                <h6 class="fw-bold">Giới thiệu</h6>
+                <p id="udBio">—</p>
+
+                <h6 class="fw-bold mt-3">Sở thích <span class="small text-secondary-hm">(được tô sáng là sở thích chung)</span></h6>
+                <div class="d-flex flex-wrap gap-2 mb-2" id="udInterests"></div>
+
+                <div class="alert alert-info d-none mt-3" id="udStatusNote"></div>
+
+                <div class="d-flex justify-content-center gap-4 mt-4">
+                  <button type="button" class="btn-action-circle pass" id="udPassBtn" title="Pass"><i class="bi bi-x-lg"></i></button>
+                  <button type="button" class="btn-action-circle like" id="udLikeBtn" title="Like"><i class="bi bi-heart-fill"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="discover.html" class="nav-item-hm" data-nav="discover"><i class="bi bi-compass"></i>Khám phá</a>
+    <a href="matches.html" class="nav-item-hm" data-nav="matches"><i class="bi bi-heart"></i>Kết nối</a>
+    <a href="messages.html" class="nav-item-hm" data-nav="messages"><i class="bi bi-chat-dots"></i>Tin nhắn</a>
+    <a href="profile.html" class="nav-item-hm" data-nav="profile"><i class="bi bi-person-circle"></i>Hồ sơ</a>
+    <a href="settings.html" class="nav-item-hm" data-nav="settings"><i class="bi bi-gear"></i>Cài đặt</a>
+  </nav>
+
+  <!-- MODAL: Xác nhận Chặn -->
+  <div class="modal fade" id="udBlockModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-3">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Chặn người dùng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bạn sẽ không còn thấy hồ sơ này trong Khám phá và không thể nhắn tin với nhau nữa. Bạn chắc chắn muốn chặn?</p>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-outline-hm" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-danger-hm" id="udConfirmBlockBtn">Chặn người này</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Báo cáo -->
+  <div class="modal fade" id="udReportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content p-3">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">Báo cáo người dùng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="udReportForm">
+          <div class="modal-body">
+            <p>Bạn đang báo cáo <strong id="udReportTargetName">—</strong>.</p>
+            <label class="form-label d-block">Lý do báo cáo</label>
+            <div class="d-flex flex-column gap-2 mb-2">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="udReportReason" value="harassment" id="udReasonHarass">
+                <label class="form-check-label" for="udReasonHarass">Quấy rối</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="udReportReason" value="fake" id="udReasonFake">
+                <label class="form-check-label" for="udReasonFake">Giả mạo tài khoản</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="udReportReason" value="inappropriate" id="udReasonInappropriate">
+                <label class="form-check-label" for="udReasonInappropriate">Nội dung không phù hợp</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="udReportReason" value="other" id="udReasonOther">
+                <label class="form-check-label" for="udReasonOther">Khác</label>
+              </div>
+            </div>
+            <div class="small text-danger d-none mb-2" id="udReportReasonError">Vui lòng chọn lý do báo cáo.</div>
+            <label class="form-label" for="udReportDescription">Mô tả chi tiết (không bắt buộc)</label>
+            <textarea class="form-control" id="udReportDescription" rows="3" placeholder="Mô tả thêm về vấn đề bạn gặp phải..."></textarea>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-outline-hm" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-gradient">Gửi báo cáo</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Match thành công (MAT-01, MAT-02) -->
+  <div class="modal fade" id="matchModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content text-center p-4">
+        <div class="modal-body">
+          <div class="match-modal-avatars">
+            <img id="matchModalAvatarMe" src="assets/images/default-avatar.svg" alt="">
+            <img id="matchModalAvatarOther" src="assets/images/default-avatar.svg" alt="">
+          </div>
+          <div class="match-modal-heart"><i class="bi bi-heart-fill"></i></div>
+          <h3 class="mt-3 text-gradient">Thật tuyệt! Hai bạn đã đồng điệu 💜</h3>
+          <p class="fw-bold" id="matchModalNames">—</p>
+          <p class="mb-4">Cả hai đã Like nhau. Hãy bắt đầu một cuộc trò chuyện ngay thôi!</p>
+          <div class="d-flex flex-column gap-2">
+            <button type="button" class="btn btn-gradient" id="matchModalChatBtn">
+              <i class="bi bi-chat-heart me-1"></i> Bắt đầu trò chuyện
+            </button>
+            <button type="button" class="btn btn-outline-hm" id="matchModalContinueBtn">Tiếp tục khám phá</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/discover.js"></script>
+  <script>
+    HarmoniApp.initAppShell('discover');
+    HarmoniDiscover.initUserDetail();
+  </script>
+</body>
+</html>

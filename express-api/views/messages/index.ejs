@@ -1,0 +1,32 @@
+<%- include("../partials/header", { title: "Tin nhắn" }) %>
+<%- include("../partials/navbar") %>
+
+<main class="page">
+    <h1>Tin nhắn</h1>
+
+    <% if (conversations.length === 0) { %>
+        <div class="empty-state">
+            <p>Chưa có cuộc trò chuyện nào. Hãy match với ai đó trước nhé.</p>
+        </div>
+    <% } else { %>
+        <div class="conversation-list">
+            <% conversations.forEach(function(item) { %>
+                <a class="conversation-item" href="/messages/<%= item.profile.id %>">
+                    <span class="avatar-lg" style="background:<%= item.profile.color %>"><%= item.profile.initials %></span>
+                    <div class="conversation-info">
+                        <span class="conversation-name"><%= item.profile.name %></span>
+                        <span class="conversation-preview">
+                            <% if (item.lastMessage) { %>
+                                <%= item.lastMessage.sender === 'me' ? 'Bạn: ' : '' %><%= item.lastMessage.text %>
+                            <% } else { %>
+                                Hãy bắt đầu cuộc trò chuyện!
+                            <% } %>
+                        </span>
+                    </div>
+                </a>
+            <% }) %>
+        </div>
+    <% } %>
+</main>
+
+<%- include("../partials/footer") %>

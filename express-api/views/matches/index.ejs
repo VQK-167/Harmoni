@@ -1,0 +1,24 @@
+<%- include("../partials/header", { title: "Match của bạn" }) %>
+<%- include("../partials/navbar") %>
+
+<main class="page">
+    <h1>Match của bạn</h1>
+
+    <% if (matches.length === 0) { %>
+        <div class="empty-state">
+            <p>Bạn chưa có match nào. Hãy sang trang <a href="/discover">Khám phá</a> để tìm người phù hợp.</p>
+        </div>
+    <% } else { %>
+        <div class="match-grid">
+            <% matches.forEach(function(profile) { %>
+                <a class="match-item" href="/messages/<%= profile.id %>">
+                    <span class="avatar-lg" style="background:<%= profile.color %>"><%= profile.initials %></span>
+                    <span class="match-name"><%= profile.name %>, <%= profile.age %></span>
+                    <span class="match-city"><%= profile.city %></span>
+                </a>
+            <% }) %>
+        </div>
+    <% } %>
+</main>
+
+<%- include("../partials/footer") %>
