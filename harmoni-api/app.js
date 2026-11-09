@@ -4,6 +4,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
+const MySQLStore = require("express-mysql-session")(session);
 
 const authApiRoute = require("./routes/api/authApiRoute");
 const profileApiRoute = require("./routes/api/profileApiRoute");
@@ -27,15 +28,46 @@ app.use(
 );
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+const sessionStore = new MySQLStore({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 3306),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  createDatabaseTable: true,
+  schema:{
+    tableName: "sessions",
+    columnNames:{
+      session_id: "session_id",
+      expires: "expires",
+      data: "data",
+    }
+  }
+})
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "harmoni-secret",
+    name: "harmoni_sid",
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, sameSite: "lax" },
+    cookie:{
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    }
   })
-);
+)
+
+function logger(req, res, next){
+  console.log(req.method, req.originalUrl);
+  next();
+}
+
+app.use(logger);
 
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Harmoni API đang chạy", data: null });
@@ -52,7 +84,7 @@ app.use("/api/blocks", blockApiRoute);
 app.use("/api/reports", reportApiRoute);
 
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: "Không tìm thấy API này" });
+  res.status(404).json({ success: false, message: "Không tìm thấy API này", data: null });
 });
 
 app.listen(PORT, () => {
