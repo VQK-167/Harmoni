@@ -1,35 +1,26 @@
-
 const bcrypt = require("bcrypt");
 const userModel = require("../../models/userModel");
 const profileModel = require("../../models/profileModel");
+
+//Kiem tra dinh dang email
+function isValidEmail(email){
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
+}
 
 // ĐĂNG KÝ
 async function register(req, res) {
     try {
         const { email, password } = req.body;
 
-        // Kiểm tra dữ liệu đầu vào
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Vui lòng nhập email và mật khẩu",
-                data: null
-            });
-        }
-
-        // Kiểm tra định dạng email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!emailRegex.test(email)) {
+        //Kiem tra du lieu dau vao
+        if (!isValidEmail(email)) {
             return res.status(400).json({
                 success: false,
                 message: "Email không hợp lệ",
                 data: null
             });
         }
-
-        // Kiểm tra độ dài mật khẩu
-        if (password.length < 6) {
+        if(!password || password.length < 6){
             return res.status(400).json({
                 success: false,
                 message: "Mật khẩu phải có ít nhất 6 ký tự",
@@ -37,34 +28,30 @@ async function register(req, res) {
             });
         }
 
-        // Kiểm tra email đã tồn tại chưa
-        const existingUser = await userModel.findByEmail(email);
+        const emailClean = email.trim().toLowerCase();
 
-        if (existingUser) {
-            return res.status(409).json({
+        const existing = await userModel.findByEmail(emailClean);
+        
+        if(existing){
+            return res.status(400).json({
                 success: false,
                 message: "Email đã được sử dụng",
                 data: null
             });
         }
 
-        // Mã hóa mật khẩu
         const passwordHash = await bcrypt.hash(password, 10);
 
-        // Tạo tài khoản
-        const userId = await userModel.createUser({
-            email,
+        const user = await userModel.createUser({
+            email: emailClean,
             passwordHash
         });
 
-        return res.status(201).json({
+        return res.status(202).json({
             success: true,
-            message: "Đăng ký tài khoản thành công",
-            data: {
-                id: userId,
-                email
-            }
-        });
+            message: "Đăng ký thành công",
+            data:{id: user.id, email: user.email}
+        })
 
     } catch (error) {
         console.error("Lỗi đăng ký:", error);
@@ -91,7 +78,7 @@ async function login(req, res) {
         }
 
         // Tìm tài khoản theo email
-        const user = await userModel.findByEmail(email);
+        const user = await userModel.findByEmail(String(email).trim().toLocaleLowerCase());
 
         if (!user) {
             return res.status(401).json({
@@ -102,12 +89,12 @@ async function login(req, res) {
         }
 
         // So sánh mật khẩu nhập vào với mật khẩu đã mã hóa
-        const isPasswordCorrect = await bcrypt.compare(
+        const matched = await bcrypt.compare(
             password,
             user.password_hash
         );
 
-        if (!isPasswordCorrect) {
+        if (!matched) {
             return res.status(401).json({
                 success: false,
                 message: "Email hoặc mật khẩu không đúng",
@@ -115,19 +102,30 @@ async function login(req, res) {
             });
         }
 
-        // Lưu ID người dùng vào session
+        if(user.status !== "ACTIVE"){
+            return res.status(403).json({
+                success: false,
+                message: "Tài khoản của bạn đã bị khóa",
+                data: null
+            });
+        }
+
         req.session.userId = user.id;
 
-        // Kiểm tra người dùng đã có hồ sơ chưa
+        //Cap nhat thoi gian dang nhap lan cuoi
+        await userModel.updateLastLogin(user.id);
+
+        //Ktra co ho so chua?
         const profile = await profileModel.findByUserId(user.id);
 
-        return res.status(200).json({
+        return res.json({
             success: true,
             message: "Đăng nhập thành công",
             data: {
                 id: user.id,
                 email: user.email,
-                hasProfile: !!profile
+                hasProfile: !!profile,
+                displayName: profile ? profile.display_name : null,
             }
         });
 
@@ -163,9 +161,11 @@ function logout(req, res) {
             });
         }
 
-        return res.status(200).json({
+        res.clearCookie("harmoni.sid");
+
+        return res.json({
             success: true,
-            message: "Đăng xuất thành công",
+            message: "Đã đăng xuất",
             data: null
         });
     });
@@ -176,7 +176,7 @@ async function me(req, res) {
     try {
         // Chưa đăng nhập
         if (!req.session || !req.session.userId) {
-            return res.status(200).json({
+            return res.json({
                 success: true,
                 message: "Người dùng chưa đăng nhập",
                 data: null
@@ -185,23 +185,24 @@ async function me(req, res) {
 
         const user = await userModel.findById(req.session.userId);
 
-        if (!user) {
-            return res.status(200).json({
+        if (!user || user.status !== "ACTIVE") {
+            return res.json({
                 success: true,
-                message: "Không tìm thấy tài khoản",
+                message: "Chưa đăng nhập",
                 data: null
             });
         }
 
         const profile = await profileModel.findByUserId(user.id);
 
-        return res.status(200).json({
+        return res.json({
             success: true,
             message: "Lấy thông tin người dùng thành công",
             data: {
                 id: user.id,
                 email: user.email,
-                hasProfile: !!profile
+                hasProfile: !!profile,
+                displayName: profile ? profile.display_name : null,
             }
         });
 

@@ -49,7 +49,7 @@ const sessionStore = new MySQLStore({
 
 app.use(
   session({
-    name: "harmoni_sid",
+    name: "harmoni.sid",
     secret: process.env.SESSION_SECRET,
     store: sessionStore,
     resave: false,
