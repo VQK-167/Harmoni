@@ -1,13 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const matchApiController = require("../../controllers/api/matchApiController");
-// TODO: thêm requireProfile từ middlewares/authMiddleware
+const { requireProfile } = require("../../middlewares/authMiddleware");
 
-router.get("/", matchApiController.getMatches);
-router.patch("/:id/unmatch", matchApiController.unmatch);
+// Lay danh sach match dang ACTIVE cua user hien tai.
+router.get("/", requireProfile, matchApiController.getMatches);
 
-// Tin nhắn lồng trong match (MSG-01..04)
-router.get("/:id/messages", matchApiController.getMessages);
-router.post("/:id/messages", matchApiController.sendMessage);
+// Huy match, chi thanh vien cua match moi duoc phep huy.
+router.patch("/:id/unmatch", requireProfile, matchApiController.unmatch);
+
+// Cac API tin nhan se dung middleware nay khi phan Messaging duoc lam.
+router.get("/:id/messages", requireProfile, matchApiController.getMessages);
+router.post("/:id/messages", requireProfile, matchApiController.sendMessage);
 
 module.exports = router;

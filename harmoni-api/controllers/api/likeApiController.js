@@ -1,20 +1,14 @@
-// Import model de controller co the luu va doc du lieu trong bang likes.
 const likeModel = require("../../models/likeModel");
+const matchModel = require("../../models/matchModel");
 
-// Xu ly request khi user bam LIKE hoac PASS.
+// Xu ly request like hoac pass.
 async function sendLike(req, res) {
   try {
-    // Lay ID nguoi dang dang nhap tu session.
-    // Khong lay senderId tu frontend de tranh gia mao nguoi gui.
     const senderId = req.session.userId;
-
-    // Lay ID nguoi duoc thao tac va hanh dong tu request body.
     const { receiverId, action } = req.body;
-
-    // Doi receiverId sang kieu so vi du lieu tu JSON co the la chuoi.
     const receiverIdNumber = Number(receiverId);
 
-    // Kiem tra receiverId co phai la so nguyen duong khong.
+    // Kiem tra receiverId co phai so nguyen duong khong.
     if (!Number.isInteger(receiverIdNumber) || receiverIdNumber <= 0) {
       return res.status(400).json({
         success: false,
@@ -23,7 +17,7 @@ async function sendLike(req, res) {
       });
     }
 
-    // Khong cho user tu LIKE hoac PASS chinh minh.
+    // Khong cho user tu like hoac pass chinh minh.
     if (receiverIdNumber === senderId) {
       return res.status(400).json({
         success: false,
@@ -32,7 +26,7 @@ async function sendLike(req, res) {
       });
     }
 
-    // Chi chap nhan dung hai hanh dong: LIKE hoac PASS.
+    // Chi chap nhan LIKE hoac PASS.
     if (action !== "LIKE" && action !== "PASS") {
       return res.status(400).json({
         success: false,
@@ -41,15 +35,49 @@ async function sendLike(req, res) {
       });
     }
 
-    // Goi model de INSERT hoac UPDATE hanh dong trong bang likes.
+    // Luu hanh dong cua sender doi voi receiver.
     await likeModel.upsert({
       senderId,
       receiverId: receiverIdNumber,
       action
     });
 
-    // Hien tai moi luu LIKE/PASS.
-    // matched van la false vi phan tao Match se lam sau bang matchModel.
+    // Chi LIKE moi co the tao Match.
+    if (action === "LIKE") {
+      // Kiem tra receiver da LIKE nguoc lai sender chua.
+      const reverseLike = await likeModel.findBySenderAndReceiver(
+        receiverIdNumber,
+        senderId
+      );
+
+      if (reverseLike && reverseLike.action === "LIKE") {
+        // Tim match cu giua hai user.
+        let match = await matchModel.findByPair(senderId, receiverIdNumber);
+
+        if (!match) {
+          // Chua co match thi tao moi.
+          match = await matchModel.create({
+            user1Id: senderId,
+            user2Id: receiverIdNumber
+          });
+        } else if (match.status === "UNMATCHED") {
+          // Co match cu nhung da huy thi kich hoat lai.
+          await matchModel.setActive(match.id);
+          match = await matchModel.findById(match.id);
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: "Da tao Match",
+          data: {
+            matched: true,
+            matchId: match.id
+          }
+        });
+      }
+    }
+
+    // LIKE mot chieu hoac PASS thi chua co Match.
     return res.status(200).json({
       success: true,
       message: "Da luu hanh dong",
@@ -59,7 +87,6 @@ async function sendLike(req, res) {
       }
     });
   } catch (error) {
-    // In loi that ra terminal de de sua khi database hoac code gap van de.
     console.error("Loi gui Like/Pass:", error);
 
     return res.status(500).json({
@@ -70,7 +97,6 @@ async function sendLike(req, res) {
   }
 }
 
-// Cho phep route goi controller bang ten sendLike.
 module.exports = {
   sendLike
 };
