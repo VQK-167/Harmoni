@@ -10,7 +10,7 @@ const interestApiRoute = require("./routes/api/interestApiRoute");
 const discoverApiRoute = require("./routes/api/discoverApiRoute");
 const userApiRoute = require("./routes/api/userApiRoute");
 const likeApiRoute = require("./routes/api/likeApiRoute");
-const matchApiRoute = require("./routes/api/matchApiRoute"); // tin nhắn (MSG) lồng trong route match
+const matchApiRoute = require("./routes/api/matchApiRoute");
 const blockApiRoute = require("./routes/api/blockApiRoute");
 const reportApiRoute = require("./routes/api/reportApiRoute");
 
@@ -47,7 +47,7 @@ const sessionStore = new MySQLStore({
 
 app.use(
   session({
-    name: "harmoni_sid",
+    name: "harmoni.sid",
     secret: process.env.SESSION_SECRET,
     store: sessionStore,
     resave: false,

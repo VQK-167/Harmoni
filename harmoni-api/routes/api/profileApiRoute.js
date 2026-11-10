@@ -1,4 +1,3 @@
-
 const express = require("express");
 const router = express.Router();
 
@@ -10,11 +9,7 @@ const {
 } = require("../../middlewares/authMiddleware");
 
 // Tạo hồ sơ
-router.post(
-    "/",
-    requireApiLogin,
-    profileApiController.createProfile
-);
+router.post("/", requireApiLogin, profileApiController.createProfile);
 
 // Xem hồ sơ của tôi
 router.get(
@@ -29,5 +24,8 @@ router.put(
     requireProfile,
     profileApiController.updateProfile
 );
+
+//Cap nhat so thich
+router.put("/me/interests", requireProfile, profileApiController.updateInterests);
 
 module.exports = router;
