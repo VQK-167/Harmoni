@@ -6,7 +6,7 @@ async function createUser({ email, passwordHash }) {
     [email, passwordHash]
   );
 
-  return result.insertId;
+  return findById(result.insertId)
 
 }
 
