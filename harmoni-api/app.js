@@ -22,11 +22,11 @@ app.use(
   cors({
     origin: process.env.CORS_ORIGIN || "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 const sessionStore = new MySQLStore({
   host: process.env.DB_HOST,
@@ -35,15 +35,15 @@ const sessionStore = new MySQLStore({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   createDatabaseTable: true,
-  schema:{
+  schema: {
     tableName: "sessions",
-    columnNames:{
+    columnNames: {
       session_id: "session_id",
       expires: "expires",
       data: "data",
-    }
-  }
-})
+    },
+  },
+});
 
 app.use(
   session({
@@ -52,15 +52,15 @@ app.use(
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
-    cookie:{
+    cookie: {
       httpOnly: true,
       sameSite: "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
-    }
-  })
-)
+    },
+  }),
+);
 
-function logger(req, res, next){
+function logger(req, res, next) {
   console.log(req.method, req.originalUrl);
   next();
 }
@@ -71,6 +71,7 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Harmoni API đang chạy", data: null });
 });
 
+// gắn route vào các api
 app.use("/api/auth", authApiRoute);
 app.use("/api/profile", profileApiRoute);
 app.use("/api/interests", interestApiRoute);
@@ -82,7 +83,9 @@ app.use("/api/blocks", blockApiRoute);
 app.use("/api/reports", reportApiRoute);
 
 app.use((req, res) => {
-  res.status(404).json({ success: false, message: "Không tìm thấy API này", data: null });
+  res
+    .status(404)
+    .json({ success: false, message: "Không tìm thấy API này", data: null });
 });
 
 app.listen(PORT, () => {
