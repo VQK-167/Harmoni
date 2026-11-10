@@ -1,5 +1,3 @@
-// app.js — khởi tạo server Express, giống cấu trúc đã học (Lab 11).
-// Chạy: npm run dev (nodemon) hoặc node app.js
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
@@ -12,7 +10,7 @@ const interestApiRoute = require("./routes/api/interestApiRoute");
 const discoverApiRoute = require("./routes/api/discoverApiRoute");
 const userApiRoute = require("./routes/api/userApiRoute");
 const likeApiRoute = require("./routes/api/likeApiRoute");
-const matchApiRoute = require("./routes/api/matchApiRoute"); // tin nhắn (MSG) lồng trong route match
+const matchApiRoute = require("./routes/api/matchApiRoute");
 const blockApiRoute = require("./routes/api/blockApiRoute");
 const reportApiRoute = require("./routes/api/reportApiRoute");
 
