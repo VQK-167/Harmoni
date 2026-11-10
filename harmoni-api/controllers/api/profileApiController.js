@@ -1,18 +1,21 @@
-
 const profileModel = require("../../models/profileModel");
+const userInterestModel = require("../../models/userInterestModel");
+
+const GENDER = ["MALE", "FEMALE", "OTHER", "UNDISCLOSED"];
+const CONNECTION_GOAL = ["FRIENDSHIP", "DATING", "LONG_TERM"];
 
 // Tính tuổi từ ngày sinh
-function calculateAge(dateOfBirth) {
+function calcAge(dateOfBirth) {
     const today = new Date();
-    const birthDate = new Date(dateOfBirth);
+    const birth = new Date(dateOfBirth);
 
-    let age = today.getFullYear() - birthDate.getFullYear();
+    let age = today.getFullYear() - birth.getFullYear();
 
-    const monthDifference = today.getMonth() - birthDate.getMonth();
+    const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-        monthDifference < 0 ||
-        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
         age--;
     }
@@ -26,21 +29,37 @@ function validateDateOfBirth(dateOfBirth) {
         return "Vui lòng nhập ngày sinh";
     }
 
-    const birthDate = new Date(dateOfBirth);
+    const birth = new Date(dateOfBirth);
 
-    if (Number.isNaN(birthDate.getTime())) {
+    if (Number.isNaN(birth.getTime())) {
         return "Ngày sinh không hợp lệ";
     }
 
-    if (birthDate > new Date()) {
+    if (birth > new Date()) {
         return "Ngày sinh không được ở tương lai";
     }
 
-    if (calculateAge(dateOfBirth) < 18) {
+    if (calcAge(dateOfBirth) < 18) {
         return "Bạn phải từ 18 tuổi trở lên";
     }
 
     return null;
+}
+
+//Dinh dang dung cho react
+function toApiProfile(profile, interestIds){
+    return{
+    userId: profile.user_id,
+    displayName: profile.display_name,
+    dateOfBirth: profile.date_of_birth,
+    age: calcAge(profile.date_of_birth),
+    gender: profile.gender,
+    city: profile.city,
+    bio: profile.bio,
+    connectionGoal: profile.connection_goal,
+    avatarUrl: profile.avatar_url,
+    interestIds: interestIds || []
+    };
 }
 
 // 1. TẠO HỒ SƠ
@@ -54,14 +73,22 @@ async function createProfile(req, res) {
             gender,
             city,
             bio,
-            connectionGoal
+            connectionGoal,
+            interestIds
         } = req.body;
 
-        // Kiểm tra các trường bắt buộc
-        if (!displayName || !dateOfBirth || !gender || !city || !connectionGoal) {
+        if (!displayName || !String(displayName).trim()) {
             return res.status(400).json({
                 success: false,
-                message: "Vui lòng nhập đầy đủ thông tin hồ sơ",
+                message: "Vui lòng nhập tên hiển thị",
+                data: null
+            });
+        }
+
+        if(!city || !String(city).trim()){
+            return res.status(400).json({
+                success: false,
+                message: "Vui lòng nhập thành phố",
                 data: null
             });
         }
@@ -77,10 +104,30 @@ async function createProfile(req, res) {
             });
         }
 
+        const genderValue = gender || "UNDISCLOSED";
+
+        if(!GENDER.includes(genderValue)){
+            return res.status(400).json({
+                success: false,
+                message: "Giới tính không hợp lệ",
+                data: null
+            });
+        }
+
+        const goalValue = connectionGoal || "FRIENDSHIP";
+
+        if(!CONNECTION_GOAL.includes(goalValue)){
+            return res.status(400).json({
+                success: false,
+                message: "Mục tiêu kết nối không hợp lệ",
+                data: null
+            });
+        }
+
         // Kiểm tra người dùng đã có hồ sơ chưa
         const existingProfile = await profileModel.findByUserId(userId);
 
-        if (existingProfile) {
+        if(existingProfile){
             return res.status(409).json({
                 success: false,
                 message: "Bạn đã có hồ sơ cá nhân",
@@ -91,21 +138,22 @@ async function createProfile(req, res) {
         // Tạo hồ sơ
         await profileModel.create({
             userId,
-            displayName,
+            displayName: String(displayName).trim(),
             dateOfBirth,
-            gender,
-            city,
-            bio: bio || null,
-            connectionGoal
+            gender: genderValue,
+            city: String(city).trim(),
+            bio: bio ? String(bio).trim() : null,
+            connectionGoal: goalValue
         });
 
-        // Lấy lại hồ sơ vừa tạo
-        const newProfile = await profileModel.findByUserId(userId);
+        const saveIds = await userInterestModel.setForUser(userId, interestIds);
+
+        const profile = await profileModel.findByUserId(userId);
 
         return res.status(201).json({
             success: true,
             message: "Tạo hồ sơ thành công",
-            data: newProfile
+            data: toApiProfile(profile, saveIds)
         });
 
     } catch (error) {
@@ -119,11 +167,10 @@ async function createProfile(req, res) {
     }
 }
 
-// 2. XEM HỒ SƠ CỦA TÔI
+// XEM HỒ SƠ CỦA TÔI
 async function getMyProfile(req, res) {
     try {
         const userId = req.session.userId;
-
         const profile = await profileModel.findByUserId(userId);
 
         if (!profile) {
@@ -134,10 +181,12 @@ async function getMyProfile(req, res) {
             });
         }
 
+        const interestIds = await userInterestModel.findByUserId(userId);
+
         return res.status(200).json({
             success: true,
             message: "Lấy hồ sơ thành công",
-            data: profile
+            data: toApiProfile(profile, interestIds)
         });
 
     } catch (error) {
@@ -163,19 +212,58 @@ async function updateProfile(req, res) {
             city,
             bio,
             connectionGoal,
-            avatarUrl
         } = req.body;
 
-        // Chỉ cho phép cập nhật những trường được quy định
+        // cho phep cap nhat trong truong quy dinh
         const fields = {};
 
-        if (displayName !== undefined) fields.displayName = displayName;
-        if (dateOfBirth !== undefined) fields.dateOfBirth = dateOfBirth;
-        if (gender !== undefined) fields.gender = gender;
-        if (city !== undefined) fields.city = city;
-        if (bio !== undefined) fields.bio = bio;
-        if (connectionGoal !== undefined) fields.connectionGoal = connectionGoal;
-        if (avatarUrl !== undefined) fields.avatarUrl = avatarUrl;
+        if (displayName !== undefined){
+            if(!String(displayName).trim()){
+                return res.status(400).json({
+                    success: false,
+                    message: "Tên hiển thị không được để trống",
+                    data: null
+                });
+            }
+            fields.displayName = String(displayName).trim();
+        }
+
+        if (dateOfBirth !== undefined){
+            const dateError = validateDateOfBirth(dateOfBirth);
+            if(dateError){
+                return res.status(400).json({
+                    success: false,
+                    message: dateError,
+                    data: null
+                });
+            }
+            fields.dateOfBirth = dateOfBirth;
+        }
+
+        if (gender !== undefined){
+            if(!GENDER.includes(gender)){
+                return res.status(400).json({
+                    success: false,
+                    message: "Giới tính không hợp lệ",
+                    data: null
+                });
+            }
+            fields.gender = gender;
+        }
+
+        if(connectionGoal !== undefined){
+            if(!CONNECTION_GOAL.includes(connectionGoal)){
+                return res.status(400).json({
+                    success: false,
+                    message: "Mục tiêu kết nối không hợp lệ",
+                    data: null
+                });
+            }
+            fields.connectionGoal = connectionGoal;
+        }
+
+        if (city !== undefined) fields.city = String(city).trim();;
+        if (bio !== undefined) fields.bio = String(bio).trim();
 
         // Không có thông tin nào được gửi lên
         if (Object.keys(fields).length === 0) {
@@ -186,29 +274,13 @@ async function updateProfile(req, res) {
             });
         }
 
-        // Nếu cập nhật ngày sinh thì kiểm tra lại độ tuổi
-        if (dateOfBirth !== undefined) {
-            const dateError = validateDateOfBirth(dateOfBirth);
+        const profile = await profileModel.update(userId, fields);
+        const interestIds = await userInterestModel.findByUserId(userId);
 
-            if (dateError) {
-                return res.status(400).json({
-                    success: false,
-                    message: dateError,
-                    data: null
-                });
-            }
-        }
-
-        // Cập nhật hồ sơ
-        await profileModel.update(userId, fields);
-
-        // Lấy lại dữ liệu sau khi cập nhật
-        const updatedProfile = await profileModel.findByUserId(userId);
-
-        return res.status(200).json({
+        return res.json({
             success: true,
             message: "Cập nhật hồ sơ thành công",
-            data: updatedProfile
+            data: toApiProfile(profile, interestIds)
         });
 
     } catch (error) {
@@ -222,8 +294,45 @@ async function updateProfile(req, res) {
     }
 }
 
+//Cap nhat rieng so thich
+async function updateInterests(req, res){
+    try{
+        const userid = req.session.userId;
+        const {interestIds} = req.body;
+
+        if(!Array.isArray(interestIds)){
+            return res.status(400).json({
+                success: false,
+                message: "interestIds phải là một mảng",
+                data: null
+            });
+        }
+        const saveIds = await userInterestModel.setForUser(
+            userid,
+            interestIds
+        );
+        const profile = await profileModel.findByUserId(userid);
+
+        return res.status(200).json({
+            success: true,
+            message: "Cập nhật sở thích thành công",
+            data: toApiProfile(profile, saveIds)
+        });
+    }
+    catch(err){
+        console.error("Lỗi cập nhật sở thích", err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Lỗi server",
+            data: null
+        });
+    }
+}
+
 module.exports = {
     createProfile,
     getMyProfile,
-    updateProfile
+    updateProfile,
+    updateInterests
 };

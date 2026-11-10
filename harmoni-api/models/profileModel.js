@@ -1,96 +1,79 @@
 const pool = require("../config/db");
 
+const FIELD_MAP = {
+    displayName: "display_name",
+    dateOfBirth: "date_of_birth",
+    gender: "gender",
+    city: "city",
+    bio: "bio",
+    connectionGoal: "connection_goal",
+}
+
 // 1. Tạo hồ sơ cá nhân
 async function create({
-    userId,
-    displayName,
-    dateOfBirth,
-    gender,
-    city,
-    bio,
-    connectionGoal
-}) {
-    const sql = `
-        INSERT INTO profiles (
-            user_id,
-            display_name,
-            date_of_birth,
-            gender,
-            city,
-            bio,
-            connection_goal
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
+    userId, displayName, dateOfBirth, gender, city, bio, connectionGoal}) {
+    await pool.execute(
+        "INSERT INTO profiles (user_id, display_name, date_of_birth, gender, city, bio, connection_goal) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [userId, displayName, dateOfBirth, gender, city || null, bio || null, connectionGoal]
+    );
 
-    const [result] = await pool.execute(sql, [
-        userId,
-        displayName,
-        dateOfBirth,
-        gender,
-        city || null,
-        bio || null,
-        connectionGoal || "FRIENDSHIP"
-    ]);
-
-    return result.insertId;
+    return findByUserId(userId);
 }
 
 // 2. Tìm hồ sơ theo ID người dùng
 async function findByUserId(userId) {
-    const sql = `
-        SELECT *
-        FROM profiles
-        WHERE user_id = ?
-        LIMIT 1
-    `;
-
-    const [rows] = await pool.execute(sql, [userId]);
+    const [rows] = await pool.execute(
+        "SELECT * FROM profiles WHERE user_id = ? LIMIT 1",
+        [userId]
+    );
 
     return rows[0] || null;
 }
 
-// 3. Cập nhật hồ sơ cá nhân
-async function update(userId, fields) {
-    const allowedFields = {
-        displayName: "display_name",
-        dateOfBirth: "date_of_birth",
-        gender: "gender",
-        city: "city",
-        bio: "bio",
-        connectionGoal: "connection_goal",
-        avatarUrl: "avatar_url"
-    };
+async function findByUserIds(userIds) {
+  if (!userIds || userIds.length === 0) {
+    return [];
+  }
 
-    const updates = [];
+  const placeholders = userIds.map(() => "?").join(", ");
+
+  const [rows] = await pool.query(
+    `SELECT * FROM profiles WHERE user_id IN (${placeholders})`,
+    userIds
+  );
+
+  return rows;
+}
+
+// 3. Cập nhật hồ sơ
+async function update(userId, fields) {
+    const sets = [];
     const values = [];
 
     for (const [key, value] of Object.entries(fields)) {
-        if (allowedFields[key]) {
-            updates.push(`${allowedFields[key]} = ?`);
+        if (FIELD_MAP[key]) {
+            sets.push(`${FIELD_MAP[key]} = ?`);
             values.push(value);
         }
     }
 
-    if (updates.length === 0) {
-        return false;
+    if (sets.length === 0) {
+        return findByUserId(userId);
     }
-
-    const sql = `
-        UPDATE profiles
-        SET ${updates.join(", ")}
-        WHERE user_id = ?
-    `;
 
     values.push(userId);
 
-    const [result] = await pool.execute(sql, values);
+    await pool.execute(
+        `UPDATE profiles SET ${sets.join(", ")} WHERE user_id = ?`,
+        values
+    );
 
-    return result.affectedRows > 0;
+    return findByUserId(userId);
 }
 
 module.exports = {
     create,
     findByUserId,
+    findByUserIds,
     update
 };
