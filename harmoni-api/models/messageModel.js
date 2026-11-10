@@ -24,7 +24,7 @@ async function findByMatchId(matchId, afterId) {
       SELECT *
       FROM messages
       WHERE match_id = ? AND id > ?
-      ORDER BY created_at ASC
+      ORDER BY sent_at ASC
     `;
 
     const [rows] = await pool.execute(SQL, [matchId, afterId]);
@@ -35,7 +35,7 @@ async function findByMatchId(matchId, afterId) {
     SELECT *
     FROM messages
     WHERE match_id = ?
-    ORDER BY created_at ASC
+    ORDER BY sent_at ASC
   `;
 
   const [rows] = await pool.execute(SQL, [matchId]);
@@ -48,7 +48,7 @@ async function findLastByMatchId(matchId) {
     SELECT *
     FROM messages
     WHERE match_id = ?
-    ORDER BY created_at DESC
+    ORDER BY sent_at DESC
     LIMIT 1
   `;
 

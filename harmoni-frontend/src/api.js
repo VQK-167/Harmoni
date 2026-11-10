@@ -6,7 +6,25 @@ const http = axios.create({
   withCredentials: true, // bắt buộc để trình duyệt gửi/nhận cookie session
 });
 
-// TODO: viết chung 1 hàm normalizeError(e) để pages luôn đọc được err.message, err.status
+function normalizeError(error) {
+  // Backend co tra ve response loi.
+  if (error.response) {
+    const normalizedError = new Error(
+      error.response.data?.message || "Co loi xay ra"
+    );
+
+    normalizedError.status = error.response.status;
+    return normalizedError;
+  }
+
+  // Khong ket noi duoc den backend.
+  const normalizedError = new Error(
+    "Khong ket noi duoc den server"
+  );
+
+  normalizedError.status = 0;
+  return normalizedError;
+}
 
 // --- Tài khoản (AUTH-01, AUTH-02, AUTH-03) ---
 // TODO: authRegister({ email, password })
@@ -22,17 +40,104 @@ const http = axios.create({
 // TODO: updateInterests(interestIds)
 
 // --- Khám phá (DIS-01..05) ---
-// TODO: discover(limit)
-// TODO: getUserDetail(id)
+// Lay danh sach user de xuat
+export async function discover(limit = 20) {
+  try {
+    const response = await http.get("/discover", {
+      params: { limit }
+    });
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// Lay chi tiet mot user
+export async function getUserDetail(id) {
+  try {
+    const response = await http.get(`/users/${id}`);
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
 
 // --- Like/Pass & Match (LIKE-01..03, MAT-01..04) ---
-// TODO: sendLike({ receiverId, action })
-// TODO: getMatches()
-// TODO: unmatch(matchId)
+// Gui hanh dong LIKE hoac PASS
+export async function sendLike({ receiverId, action }) {
+  try {
+    const response = await http.post("/likes", {
+      receiverId,
+      action
+    });
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// Lay danh sach Match
+export async function getMatches() {
+  try {
+    const response = await http.get("/matches");
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// Huy Match
+export async function unmatch(matchId) {
+  try {
+    const response = await http.patch(
+      `/matches/${matchId}/unmatch`
+    );
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
 
 // --- Nhắn tin (MSG-01..04) ---
-// TODO: getMessages(matchId, afterId)
-// TODO: sendMessage(matchId, content)
+// Lay tin nhan cua mot Match
+export async function getMessages(matchId, afterId) {
+  try {
+    const params = {};
+
+    // Neu co afterId thi chi lay tin nhan moi hon ID do
+    if (afterId !== undefined && afterId !== null) {
+      params.afterId = afterId;
+    }
+
+    const response = await http.get(
+      `/matches/${matchId}/messages`,
+      { params }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// Gui tin nhan trong mot Match
+export async function sendMessage(matchId, content) {
+  try {
+    const response = await http.post(
+      `/matches/${matchId}/messages`,
+      { content }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
 
 // --- An toàn (SAF-01..04) ---
 // TODO: blockUser(userId)

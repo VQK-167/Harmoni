@@ -72,7 +72,7 @@ async function findById(matchId) {
 async function setUnmatched(matchId) {
   const SQL = `
     UPDATE matches
-    SET status = 'UNMATCHED'
+    SET status = 'UNMATCHED', unmatched_at = NOW()
     WHERE id = ?
   `;
 
@@ -83,7 +83,7 @@ async function setUnmatched(matchId) {
 async function setActive(matchId) {
   const SQL = `
     UPDATE matches
-    SET status = 'ACTIVE'
+    SET status = 'ACTIVE', unmatched_at = NULL
     WHERE id = ?
   `;
 
