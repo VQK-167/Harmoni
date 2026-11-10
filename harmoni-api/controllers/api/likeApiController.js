@@ -1,5 +1,6 @@
 const likeModel = require("../../models/likeModel");
 const matchModel = require("../../models/matchModel");
+const blockModel = require("../../models/blockModel");
 
 // Xu ly request like hoac pass.
 async function sendLike(req, res) {
@@ -31,6 +32,20 @@ async function sendLike(req, res) {
       return res.status(400).json({
         success: false,
         message: "action phai la LIKE hoac PASS",
+        data: null
+      });
+    }
+
+    // Khong cho tuong tac voi nguoi da chan mot trong hai chieu.
+    const isBlocked = await blockModel.isBlockedEitherWay(
+      senderId,
+      receiverIdNumber
+    );
+
+    if (isBlocked) {
+      return res.status(403).json({
+        success: false,
+        message: "Khong the Like hoac Pass nguoi da chan",
         data: null
       });
     }

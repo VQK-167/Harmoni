@@ -1,6 +1,7 @@
 const matchModel = require("../../models/matchModel");
 const messageModel = require("../../models/messageModel");
 const profileModel = require("../../models/profileModel");
+const blockModel = require("../../models/blockModel");
 
 // Kiem tra match ton tai va user hien tai co thuoc match khong.
 async function getUserMatch(matchId, userId) {
@@ -164,6 +165,19 @@ async function sendMessage(req, res) {
       return res.status(403).json({
         success: false,
         message: "Ban khong co quyen gui tin nhan",
+        data: null
+      });
+    }
+
+    const otherUserId = result.match.user1_id === userId
+      ? result.match.user2_id
+      : result.match.user1_id;
+    const isBlocked = await blockModel.isBlockedEitherWay(userId, otherUserId);
+
+    if (isBlocked) {
+      return res.status(403).json({
+        success: false,
+        message: "Khong the gui tin nhan voi nguoi da chan",
         data: null
       });
     }

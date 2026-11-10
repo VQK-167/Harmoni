@@ -2,6 +2,7 @@ const pool = require("../../config/db");
 const profileModel = require("../../models/profileModel");
 const userInterestModel = require("../../models/userInterestModel");
 const likeModel = require("../../models/likeModel");
+const blockModel = require("../../models/blockModel");
 
 // Tinh tuoi tu ngay sinh.
 function calculateAge(dateOfBirth) {
@@ -51,22 +52,18 @@ function toPublicProfile(profile, interestIds, similarity, commonInterestIds) {
 
 // Lay cac profile khac, user dang ACTIVE va khong bi block hai chieu.
 async function findCandidates(userId) {
+  const blockedIds = await blockModel.findBlockedUserIds(userId);
   const SQL = `
     SELECT p.*
     FROM profiles p
     INNER JOIN users u ON u.id = p.user_id
     WHERE p.user_id <> ?
       AND u.status = 'ACTIVE'
-      AND NOT EXISTS (
-        SELECT 1
-        FROM blocks b
-        WHERE (b.blocker_id = ? AND b.blocked_id = p.user_id)
-           OR (b.blocker_id = p.user_id AND b.blocked_id = ?)
-      )
   `;
 
-  const [rows] = await pool.execute(SQL, [userId, userId, userId]);
-  return rows;
+  const [rows] = await pool.execute(SQL, [userId]);
+
+  return rows.filter((profile) => !blockedIds.has(Number(profile.user_id)));
 }
 
 // Lay danh sach nguoi de xuat cho user hien tai.
