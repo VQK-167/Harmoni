@@ -13,7 +13,7 @@ async function setForUser(userId, interestIds) {
         );
 
         //loai bo id trung/ khong hop le
-        const ids = [...new Set((interestIds || [])).map(Number).filter((n) => Number.isInteger(n) && n > 0)];
+        const ids = [...new Set((interestIds || []).map(Number).filter((n) => Number.isInteger(n) && n > 0))];
 
         //them so thich moi
         if (ids.length > 0) {
@@ -58,7 +58,7 @@ async function findByUserIds(userIds){
     const placeholders = userIds.map(() => "?").join(", ");
 
     const [rows] = await pool.query(
-        "SELECt user_id, interest_id FROM user_interests WHERE user_id IN (${placeholders})",
+        `SELECT user_id, interest_id FROM user_interests WHERE user_id IN (${placeholders})`,
         userIds
     );
 

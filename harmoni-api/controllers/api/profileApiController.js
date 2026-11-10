@@ -1,7 +1,7 @@
 const profileModel = require("../../models/profileModel");
-const userInterestsModel = require("../../models/userInterestModel");
+const userInterestModel = require("../../models/userInterestModel");
 
-const GENDER = ["MALE", "FEMALE", "OTHER", "UNSPECIFIED"];
+const GENDER = ["MALE", "FEMALE", "OTHER", "UNDISCLOSED"];
 const CONNECTION_GOAL = ["FRIENDSHIP", "DATING", "LONG_TERM"];
 
 // Tính tuổi từ ngày sinh
@@ -47,7 +47,7 @@ function validateDateOfBirth(dateOfBirth) {
 }
 
 //Dinh dang dung cho react
-function toApiProfile(profile){
+function toApiProfile(profile, interestIds){
     return{
     userId: profile.user_id,
     displayName: profile.display_name,
@@ -104,7 +104,7 @@ async function createProfile(req, res) {
             });
         }
 
-        const genderValue = gender || "UNSPECIFIED";
+        const genderValue = gender || "UNDISCLOSED";
 
         if(!GENDER.includes(genderValue)){
             return res.status(400).json({
@@ -146,7 +146,7 @@ async function createProfile(req, res) {
             connectionGoal: goalValue
         });
 
-        const saveIds = await userIntersestModel.setForUser(userId, interestIds);
+        const saveIds = await userInterestModel.setForUser(userId, interestIds);
 
         const profile = await profileModel.findByUserId(userId);
 
@@ -295,7 +295,7 @@ async function updateProfile(req, res) {
 }
 
 //Cap nhat rieng so thich
-async function updateInterests(rq, res){
+async function updateInterests(req, res){
     try{
         const userid = req.session.userId;
         const {interestIds} = req.body;
@@ -307,13 +307,13 @@ async function updateInterests(rq, res){
                 data: null
             });
         }
-        const saveIds = await userInterestsModel.setForUser(
+        const saveIds = await userInterestModel.setForUser(
             userid,
             interestIds
         );
         const profile = await profileModel.findByUserId(userid);
 
-        return res.status(400).json({
+        return res.status(200).json({
             success: true,
             message: "Cập nhật sở thích thành công",
             data: toApiProfile(profile, saveIds)

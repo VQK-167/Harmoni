@@ -1,12 +1,12 @@
 const pool = require("../config/db");
 
 const FIELD_MAP = {
-    displayName: "displayname",
-    dateOfBirth: "dateofbirth",
+    displayName: "display_name",
+    dateOfBirth: "date_of_birth",
     gender: "gender",
     city: "city",
     bio: "bio",
-    connectionGoal: "connectiongoal",
+    connectionGoal: "connection_goal",
 }
 
 // 1. Tạo hồ sơ cá nhân
@@ -38,7 +38,7 @@ async function findByUserIds(userIds) {
   const placeholders = userIds.map(() => "?").join(", ");
 
   const [rows] = await pool.query(
-    "SELECT * FROM profiles WHERE user_id IN (${placeholders})",
+    `SELECT * FROM profiles WHERE user_id IN (${placeholders})`,
     userIds
   );
 
@@ -64,7 +64,7 @@ async function update(userId, fields) {
     values.push(userId);
 
     await pool.execute(
-        "UPDATE profiles SET ${sets.join(", ")} WHERE user_id = ?",
+        `UPDATE profiles SET ${sets.join(", ")} WHERE user_id = ?`,
         values
     );
 
