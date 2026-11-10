@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const discoverApiController = require("../../controllers/api/discoverApiController");
-// TODO: thêm requireProfile từ middlewares/authMiddleware (phải có hồ sơ mới được khám phá)
+const { requireProfile } = require("../../middlewares/authMiddleware");
 
-router.get("/", discoverApiController.getDiscoverList);
+// Chi user da dang nhap va co profile moi duoc xem Discovery.
+router.get("/", requireProfile, discoverApiController.getDiscoverList);
 
 module.exports = router;
