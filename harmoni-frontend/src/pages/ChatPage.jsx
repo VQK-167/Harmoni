@@ -129,7 +129,7 @@ function ChatPage({ user }) {
   if (loading) {
     return (
       <div className="container py-5">
-        Dang tai cuoc tro chuyen...
+        Đang tải cuộc trò chuyện...
       </div>
     );
   }
@@ -146,14 +146,14 @@ function ChatPage({ user }) {
     <div className="container py-5" style={{ maxWidth: 640 }}>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Link className="btn btn-link px-0" to="/matches">
-          &larr; Ket noi
+          &larr; Kết nối
         </Link>
 
         <button
           className="btn btn-outline-secondary btn-sm"
           onClick={loadNew}
         >
-          Lam moi
+          Làm mới
         </button>
       </div>
 
@@ -167,7 +167,7 @@ function ChatPage({ user }) {
       >
         {messages.length === 0 ? (
           <p className="text-secondary text-center mb-0">
-            Chua co tin nhan nao. Hay noi loi chao!
+            Chưa có tin nhắn nào. Hãy nói lời chào!
           </p>
         ) : (
           messages.map((message) => (
@@ -183,13 +183,13 @@ function ChatPage({ user }) {
       {matchStatus === "ACTIVE" ? (
         <form onSubmit={handleSend} className="d-flex gap-2">
           <label className="visually-hidden" htmlFor="chat-input">
-            Noi dung tin nhan
+            Nội dung tin nhắn
           </label>
 
           <input
             id="chat-input"
             className="form-control"
-            placeholder="Nhap tin nhan..."
+            placeholder="Nhập tin nhắn..."
             maxLength={1000}
             value={content}
             onChange={(event) => setContent(event.target.value)}
@@ -199,12 +199,12 @@ function ChatPage({ user }) {
             className="btn btn-primary"
             disabled={sending}
           >
-            {sending ? "..." : "Gui"}
+            {sending ? "..." : "Gửi"}
           </button>
         </form>
       ) : (
         <div className="alert alert-warning mb-0">
-          Ket noi da bi huy, khong the gui tin nhan.
+          Kết nối đã bị hủy, không thể gửi tin nhắn.
         </div>
       )}
     </div>

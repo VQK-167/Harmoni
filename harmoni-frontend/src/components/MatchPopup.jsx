@@ -17,11 +17,11 @@ function MatchPopup({ displayName, matchId, onClose }) {
         onClick={(event) => event.stopPropagation()}
       >
         <h4 className="mb-2">
-          Ket noi thanh cong!
+          Kết nối thành công!
         </h4>
 
         <p className="mb-4">
-          Ban va <strong>{displayName}</strong> da thich nhau.
+          Bạn và <strong>{displayName}</strong> đã thích nhau.
         </p>
 
         <div className="d-flex gap-2 justify-content-center">
@@ -29,14 +29,14 @@ function MatchPopup({ displayName, matchId, onClose }) {
             className="btn btn-primary"
             to={`/matches/${matchId}/chat`}
           >
-            Nhan tin ngay
+            Nhắn tin ngay
           </Link>
 
           <button
             className="btn btn-outline-secondary"
             onClick={onClose}
           >
-            Tiep tuc kham pha
+            Tiếp tục khám phá
           </button>
         </div>
       </div>
