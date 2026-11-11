@@ -78,13 +78,13 @@ function UserDetailPage() {
 
   // Goi API block cua Khai.
   async function handleBlock() {
-    if (!window.confirm("Ban co chac muon chan nguoi nay khong?")) {
+    if (!window.confirm("Bạn có chắc muốn chặn người này không?")) {
       return;
     }
 
     try {
       await blockUser(profile.userId);
-      alert("Da chan nguoi dung");
+      alert("Đã chặn người dùng");
       navigate("/discover");
     } catch (err) {
       alert(err.message);
@@ -102,7 +102,7 @@ function UserDetailPage() {
         description
       });
 
-      alert("Da gui bao cao");
+      alert("Đã gửi báo cáo");
       setShowReport(false);
       setDescription("");
     } catch (err) {
@@ -111,7 +111,7 @@ function UserDetailPage() {
   }
 
   if (loading) {
-    return <div className="container py-5">Dang tai profile...</div>;
+    return <div className="container py-5">Đang tải profile...</div>;
   }
 
   if (error) {
@@ -129,7 +129,7 @@ function UserDetailPage() {
   return (
     <div className="container py-5" style={{ maxWidth: 700 }}>
       <button className="btn btn-link px-0 mb-3" onClick={() => navigate(-1)}>
-        &larr; Quay lai
+        &larr; Quay lại
       </button>
 
       <div className="card p-4 mb-3">
@@ -152,7 +152,7 @@ function UserDetailPage() {
         {profile.bio && <p className="mb-4">{profile.bio}</p>}
 
         <h6 className="text-uppercase small text-secondary">
-          So thich chung ({profile.commonInterestIds?.length || 0})
+          Sở thích chung ({profile.commonInterestIds?.length || 0})
         </h6>
         <div className="d-flex flex-wrap gap-1 mb-3">
           {profile.commonInterestIds?.length > 0 ? (
@@ -162,12 +162,12 @@ function UserDetailPage() {
               </span>
             ))
           ) : (
-            <span className="text-secondary">Chua co so thich chung</span>
+            <span className="text-secondary">Chưa có sở thích chung</span>
           )}
         </div>
 
         <h6 className="text-uppercase small text-secondary">
-          Tat ca so thich
+          Tất cả sở thích
         </h6>
         <div className="d-flex flex-wrap gap-1 mb-4">
           {(profile.interestIds || []).map((interestId) => (
@@ -179,33 +179,33 @@ function UserDetailPage() {
 
         {profile.isBlocked ? (
           <div className="alert alert-warning mb-0">
-            Hai ban dang chan nhau, khong the tuong tac.
+            Hai bạn đang chặn nhau, không thể tương tác.
           </div>
         ) : (
           <div className="d-flex gap-2">
             {profile.myAction === null && (
               <>
                 <button className="btn btn-primary" onClick={() => handleAction("LIKE")}>
-                  Thich
+                  Thích
                 </button>
                 <button
                   className="btn btn-outline-secondary"
                   onClick={() => handleAction("PASS")}
                 >
-                  Bo qua
+                  Bỏ qua
                 </button>
               </>
             )}
 
             {profile.myAction === "LIKE" && (
               <span className="text-success align-self-center">
-                Ban da thich nguoi nay
+                Bạn đã thích người này
               </span>
             )}
 
             {profile.myAction === "PASS" && (
               <button className="btn btn-primary" onClick={() => handleAction("LIKE")}>
-                Doi y, thich nguoi nay
+                Đổi ý, thích người này
               </button>
             )}
           </div>
@@ -213,25 +213,25 @@ function UserDetailPage() {
       </div>
 
       <div className="card p-4">
-        <h6 className="text-uppercase small text-secondary">An toan</h6>
+        <h6 className="text-uppercase small text-secondary">An toàn</h6>
         <div className="d-flex gap-2">
           {!profile.isBlocked && (
             <button className="btn btn-outline-danger btn-sm" onClick={handleBlock}>
-              Chan nguoi nay
+              Chặn người này
             </button>
           )}
           <button
             className="btn btn-outline-danger btn-sm"
             onClick={() => setShowReport((value) => !value)}
           >
-            Bao cao
+            Báo cáo
           </button>
         </div>
 
         {showReport && (
           <form className="border rounded p-3 mt-3" onSubmit={handleReport}>
             <label className="form-label" htmlFor="report-reason">
-              Ly do bao cao
+              Lý do báo cáo
             </label>
             <select
               id="report-reason"
@@ -250,13 +250,13 @@ function UserDetailPage() {
               className="form-control mb-3"
               rows="3"
               maxLength={1000}
-              placeholder="Mo ta them"
+              placeholder="Mô tả thêm"
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />
 
             <button type="submit" className="btn btn-danger btn-sm">
-              Gui bao cao
+              Gửi báo cáo
             </button>
           </form>
         )}

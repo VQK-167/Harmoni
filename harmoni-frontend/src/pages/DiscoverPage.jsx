@@ -72,7 +72,7 @@ function DiscoverPage() {
   }
 
   if (loading) {
-    return <div className="container py-5">Dang tai danh sach de xuat...</div>;
+    return <div className="container py-5">Đang tải danh sách đề xuất...</div>;
   }
 
   if (error) {
@@ -80,7 +80,7 @@ function DiscoverPage() {
       <div className="container py-5">
         <div className="alert alert-danger">{error}</div>
         <button className="btn btn-primary" onClick={load}>
-          Thu lai
+          Thử lại
         </button>
       </div>
     );
@@ -88,16 +88,16 @@ function DiscoverPage() {
 
   return (
     <div className="container py-5" style={{ maxWidth: 820 }}>
-      <h2 className="mb-1">Kham pha</h2>
+      <h2 className="mb-1">Khám phá</h2>
       <p className="text-secondary mb-4">
-        Danh sach duoc sap xep theo do tuong dong so thich.
+        Danh sách được sắp xếp theo độ tương đồng sở thích.
       </p>
 
       {list.length === 0 ? (
         <div className="text-center py-5">
-          <p className="mb-3">Ban da xem het ho so phu hop.</p>
+          <p className="mb-3">Bạn đã xem hết hồ sơ phù hợp.</p>
           <Link className="btn btn-outline-primary" to="/matches">
-            Xem ket noi cua toi
+            Xem kết nối của tôi
           </Link>
         </div>
       ) : (
@@ -123,7 +123,7 @@ function DiscoverPage() {
               {person.commonInterestIds?.length > 0 && (
                 <div className="mb-3">
                   <small className="text-secondary d-block mb-1">
-                    So thich chung:
+                    Sở thích chung:
                   </small>
                   <div className="d-flex flex-wrap gap-1">
                     {person.commonInterestIds.map((interestId) => (
@@ -141,7 +141,7 @@ function DiscoverPage() {
                   disabled={acting}
                   onClick={() => handleAction(person, "LIKE")}
                 >
-                  Thich
+                  Thích
                 </button>
 
                 <button
@@ -149,14 +149,14 @@ function DiscoverPage() {
                   disabled={acting}
                   onClick={() => handleAction(person, "PASS")}
                 >
-                  Bo qua
+                  Bỏ qua
                 </button>
 
                 <Link
                   className="btn btn-link btn-sm ms-auto"
                   to={`/users/${person.userId}`}
                 >
-                  Xem chi tiet
+                  Xem chi tiết
                 </Link>
               </div>
             </div>
