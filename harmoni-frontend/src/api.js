@@ -26,18 +26,94 @@ function normalizeError(error) {
   return normalizedError;
 }
 
-// --- Tài khoản (AUTH-01, AUTH-02, AUTH-03) ---
-// TODO: authRegister({ email, password })
-// TODO: authLogin({ email, password })
-// TODO: authLogout()
-// TODO: authMe() — KHÔNG throw khi chưa đăng nhập, trả data: null
+// ----- Tai khoan (AUTH-01, 02, 03) -----
 
-// --- Sở thích & hồ sơ (INT-01..03, PRO-01..04) ---
-// TODO: getInterests()
-// TODO: createProfile({ name, birthDate, gender, city, bio, purpose, interestIds })
-// TODO: getMyProfile()
-// TODO: updateProfile({ name, birthDate, gender, city, bio, purpose })
-// TODO: updateInterests(interestIds)
+export async function authRegister({ email, password }) {
+  try {
+    const response = await http.post("/auth/register", { email, password });
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function authLogin({ email, password }) {
+  try {
+    const response = await http.post("/auth/login", { email, password });
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function authLogout() {
+  try {
+    const response = await http.post("/auth/logout");
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// Backend tra 200 kem data: null khi chua dang nhap -> ham nay
+// KHONG throw trong truong hop binh thuong do.
+export async function authMe() {
+  try {
+    const response = await http.get("/auth/me");
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// ----- So thich (INT-01, 02, 03) -----
+
+export async function getInterests() {
+  try {
+    const response = await http.get("/interests");
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function updateInterests(interestIds) {
+  try {
+    const response = await http.put("/profile/me/interests", { interestIds });
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// ----- Ho so (PRO-01, 02, 03, 04) -----
+
+export async function createProfile(payload) {
+  try {
+    const response = await http.post("/profile", payload);
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function getMyProfile() {
+  try {
+    const response = await http.get("/profile/me");
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function updateProfile(payload) {
+  try {
+    const response = await http.put("/profile/me", payload);
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
 
 // --- Khám phá (DIS-01..05) ---
 // Lay danh sach user de xuat
@@ -139,10 +215,70 @@ export async function sendMessage(matchId, content) {
   }
 }
 
-// --- An toàn (SAF-01..04) ---
-// TODO: blockUser(userId)
-// TODO: getBlocks()
-// TODO: unblockUser(userId)
-// TODO: reportUser({ targetUserId, reason, detail })
+// ----- An toan (SAF-01, 02, 03) -----
+
+export async function blockUser(userId) {
+  try {
+    const response = await http.post("/blocks", { userId });
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function getBlocks() {
+  try {
+    const response = await http.get("/blocks");
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function unblockUser(userId) {
+  try {
+    const response = await http.delete(`/blocks/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+export async function reportUser({ reportedId, reason, description }) {
+  try {
+    const response = await http.post("/reports", {
+      reportedId,
+      reason,
+      description,
+    });
+    return response.data;
+  } catch (error) {
+    throw normalizeError(error);
+  }
+}
+
+// ----- Cac hang so dung chung cho nhieu trang -----
+
+// Dropdown bao cao (SAF-03). Gia tri ben trai PHAI khop ENUM trong DB.
+export const REPORT_REASONS = [
+  { value: "HARASSMENT", label: "Quấy rối, lạm dụng" },
+  { value: "FAKE_PROFILE", label: "Hồ sơ giả mạo" },
+  { value: "INAPPROPRIATE_CONTENT", label: "Nội dung không phù hợp" },
+  { value: "SPAM", label: "Spam, quảng cáo" },
+  { value: "OTHER", label: "Lý do khác" },
+];
+
+export const GENDER_LABEL = {
+  MALE: "Nam",
+  FEMALE: "Nữ",
+  OTHER: "Khác",
+  UNDISCLOSED: "Không tiết lộ",
+};
+
+export const GOAL_LABEL = {
+  FRIENDSHIP: "Kết bạn",
+  DATING: "Hẹn hò",
+  LONG_TERM: "Mối quan hệ lâu dài",
+};
 
 export { http };
