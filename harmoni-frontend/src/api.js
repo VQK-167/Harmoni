@@ -26,8 +26,7 @@ function normalizeError(error) {
   return normalizedError;
 }
 
-// ----- Tai khoan (AUTH-01, 02, 03) -----
-
+//Auth
 export async function authRegister({ email, password }) {
   try {
     const response = await http.post("/auth/register", { email, password });
@@ -55,8 +54,6 @@ export async function authLogout() {
   }
 }
 
-// Backend tra 200 kem data: null khi chua dang nhap -> ham nay
-// KHONG throw trong truong hop binh thuong do.
 export async function authMe() {
   try {
     const response = await http.get("/auth/me");
@@ -66,8 +63,7 @@ export async function authMe() {
   }
 }
 
-// ----- So thich (INT-01, 02, 03) -----
-
+//So thich int 1 2 3
 export async function getInterests() {
   try {
     const response = await http.get("/interests");
@@ -86,8 +82,7 @@ export async function updateInterests(interestIds) {
   }
 }
 
-// ----- Ho so (PRO-01, 02, 03, 04) -----
-
+//Ho so pro 1 2 3 4
 export async function createProfile(payload) {
   try {
     const response = await http.post("/profile", payload);

@@ -23,13 +23,8 @@ function App() {
   //   undefined = dang goi authMe(), CHUA BIET
   //   null      = chac chan chua dang nhap
   //   object    = da dang nhap
-  // Neu khoi tao bang null thi luc F5, ProtectedRoute thay null va day
-  // ve /login NGAY TRUOC KHI authMe() tra loi -> nguoi dang dang nhap
-  // van bi tong ra. Vi vay phai co trang thai thu ba.
   const [user, setUser] = useState(undefined);
 
-  // Mang rong [] = chay 1 lan sau khi component mount.
-  // Tuong duong componentDidMount cua class component.
   useEffect(() => {
     checkSession();
   }, []);
@@ -37,14 +32,14 @@ function App() {
   async function checkSession() {
     try {
       const res = await authMe();
-      setUser(res.data); // data = null neu chua dang nhap
+      setUser(res.data);
     } catch (err) {
       console.error(err);
       setUser(null);
     }
   }
 
-  // LoginPage goi ham nay de day du lieu user len App (lifting state up)
+  // LoginPage goi ham nay de day du lieu user len App
   function handleLoginSuccess(loginData) {
     setUser(loginData);
   }
@@ -70,8 +65,6 @@ function App() {
     setUser(null);
   }
 
-  // Dang goi authMe, chua biet gi -> khong ve route nao de tranh nhay
-  // trang. Thieu doan nay la F5 bi day ve /login.
   if (user === undefined) {
     return (
       <div className="container py-5 text-center text-secondary">
