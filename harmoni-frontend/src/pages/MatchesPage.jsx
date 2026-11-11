@@ -27,7 +27,7 @@ function MatchesPage({ user }) {
     }
   }
 
-  // Huy mot Match.
+  // Hủy mot Match.
   async function handleUnmatch(matchId) {
     if (!window.confirm("Bạn có chắc muốn hủy kết nối này không?")) {
       return;
@@ -100,6 +100,12 @@ function MatchesPage({ user }) {
 
                 <div className="d-flex gap-2 flex-shrink-0">
                   <Link
+                    className="btn btn-outline-primary btn-sm"
+                    to={`/users/${match.otherUser?.userId}`}
+                  >
+                    Xem chi tiết
+                  </Link>
+                  <Link
                     className="btn btn-primary btn-sm"
                     to={`/matches/${match.matchId}/chat`}
                   >
@@ -109,7 +115,7 @@ function MatchesPage({ user }) {
                     className="btn btn-outline-danger btn-sm"
                     onClick={() => handleUnmatch(match.matchId)}
                   >
-                    Huy
+                    Hủy
                   </button>
                 </div>
               </div>

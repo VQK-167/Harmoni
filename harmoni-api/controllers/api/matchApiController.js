@@ -2,6 +2,7 @@ const matchModel = require("../../models/matchModel");
 const messageModel = require("../../models/messageModel");
 const profileModel = require("../../models/profileModel");
 const blockModel = require("../../models/blockModel");
+const likeModel = require("../../models/likeModel");
 
 // Kiem tra match ton tai va user hien tai co thuoc match khong.
 async function getUserMatch(matchId, userId) {
@@ -85,6 +86,12 @@ async function unmatch(req, res) {
     }
 
     await matchModel.setUnmatched(matchId);
+
+    // Xoa Like hai chieu de hai user co the thay lai nhau trong Discovery.
+    const otherUserId = result.match.user1_id === userId
+      ? result.match.user2_id
+      : result.match.user1_id;
+    await likeModel.removePair(userId, otherUserId);
 
     return res.status(200).json({
       success: true,
