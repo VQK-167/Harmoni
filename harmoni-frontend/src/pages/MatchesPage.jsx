@@ -27,9 +27,9 @@ function MatchesPage({ user }) {
     }
   }
 
-  // Huy mot Match.
+  // Hủy mot Match.
   async function handleUnmatch(matchId) {
-    if (!window.confirm("Ban co chac muon huy ket noi nay khong?")) {
+    if (!window.confirm("Bạn có chắc muốn hủy kết nối này không?")) {
       return;
     }
 
@@ -46,7 +46,7 @@ function MatchesPage({ user }) {
   }
 
   if (loading) {
-    return <div className="container py-5">Dang tai danh sach ket noi...</div>;
+    return <div className="container py-5">Đang tải danh sách kết nối...</div>;
   }
 
   if (error) {
@@ -54,7 +54,7 @@ function MatchesPage({ user }) {
       <div className="container py-5">
         <div className="alert alert-danger">{error}</div>
         <button className="btn btn-primary" onClick={loadMatches}>
-          Thu lai
+          Thử lại
         </button>
       </div>
     );
@@ -62,16 +62,16 @@ function MatchesPage({ user }) {
 
   return (
     <div className="container py-5" style={{ maxWidth: 720 }}>
-      <h2 className="mb-1">Ket noi cua toi</h2>
+      <h2 className="mb-1">Kết nối của tôi</h2>
       <p className="text-secondary mb-4">
-        Cac Match cua ban va tin nhan moi nhat.
+        Các Match của bạn và tin nhắn mới nhất.
       </p>
 
       {matches.length === 0 ? (
         <div className="text-center py-5">
-          <p className="mb-3">Ban chua co ket noi nao.</p>
+          <p className="mb-3">Bạn chưa có kết nối nào.</p>
           <Link className="btn btn-primary" to="/discover">
-            Bat dau kham pha
+            Bắt đầu khám phá
           </Link>
         </div>
       ) : (
@@ -81,35 +81,41 @@ function MatchesPage({ user }) {
               <div className="d-flex justify-content-between align-items-center gap-3">
                 <div style={{ minWidth: 0 }}>
                   <div className="fw-semibold">
-                    {match.otherUser?.displayName || "Nguoi dung da xoa"}
+                    {match.otherUser?.displayName || "Người dùng đã xóa"}
                   </div>
 
                   <div className="text-secondary text-truncate small">
                     {match.lastMessage ? (
                       <>
                         {user && match.lastMessage.sender_id === user.id && (
-                          <span>Ban: </span>
+                          <span>Bạn:</span>
                         )}
                         {match.lastMessage.content}
                       </>
                     ) : (
-                      <em>Chua co tin nhan nao.</em>
+                      <em>Chưa có tin nhắn nào.</em>
                     )}
                   </div>
                 </div>
 
                 <div className="d-flex gap-2 flex-shrink-0">
                   <Link
+                    className="btn btn-outline-primary btn-sm"
+                    to={`/users/${match.otherUser?.userId}`}
+                  >
+                    Xem chi tiết
+                  </Link>
+                  <Link
                     className="btn btn-primary btn-sm"
                     to={`/matches/${match.matchId}/chat`}
                   >
-                    Nhan tin
+                    Nhắn tin
                   </Link>
                   <button
                     className="btn btn-outline-danger btn-sm"
                     onClick={() => handleUnmatch(match.matchId)}
                   >
-                    Huy
+                    Hủy
                   </button>
                 </div>
               </div>

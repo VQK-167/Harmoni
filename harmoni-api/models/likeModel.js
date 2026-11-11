@@ -33,8 +33,20 @@ async function findLikedReceiverIds(senderId) {
   return rows.map((row) => row.receiver_id);
 }
 
+// Xoa hanh dong cua ca hai user de ho co the xuat hien lai trong Discovery.
+async function removePair(userAId, userBId) {
+  const SQL = `
+    DELETE FROM likes
+    WHERE (sender_id = ? AND receiver_id = ?)
+       OR (sender_id = ? AND receiver_id = ?)
+  `;
+
+  await pool.execute(SQL, [userAId, userBId, userBId, userAId]);
+}
+
 module.exports = {
   upsert,
   findBySenderAndReceiver,
   findLikedReceiverIds,
+  removePair,
 };

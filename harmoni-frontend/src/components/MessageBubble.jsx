@@ -7,15 +7,15 @@ function MessageBubble({ message, myUserId }) {
     <div
       className={
         mine
-          ? "d-flex justify-content-end mb-2" // Tin cua minh hien ben phai
-          : "d-flex justify-content-start mb-2" // Tin cua nguoi khac hien ben trai
+          ? "d-flex justify-content-end mb-2"
+          : "d-flex justify-content-start mb-2"
       }
     >
       <div
         className={
           mine
-            ? "bg-primary text-white rounded-3 px-3 py-2" // Tin cua minh hien mau xanh
-            : "bg-light rounded-3 px-3 py-2" // Tin cua nguoi khac hien mau xam
+            ? "bg-primary text-white rounded-3 px-3 py-2"
+            : "bg-light rounded-3 px-3 py-2"
         }
         style={{ maxWidth: "75%" }}
       >
@@ -29,7 +29,7 @@ function MessageBubble({ message, myUserId }) {
               ? "small text-white-50 mt-1"
               : "small text-secondary mt-1"
           }
-        > // Hien thi thoi gian gui tin nhan
+        >
           {new Date(message.sent_at).toLocaleTimeString("vi-VN", {
             hour: "2-digit",
             minute: "2-digit"
