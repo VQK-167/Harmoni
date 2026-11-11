@@ -1,1 +1,88 @@
-/* TODO: style chung toàn app */
+:root {
+  --hm-plum: #6B2D5B;
+  --hm-plum-dark: #4A1D3E;
+  --hm-plum-soft: #F3E7EF;
+  --hm-green: #1A5C4C;
+  --hm-green-soft: #E7F2EE;
+  --hm-ground: #FAF8F7;
+  --hm-ink: #2A1F2B;
+  --hm-ink-2: #6B5C6D;
+  --hm-rule: #E6DFE4;
+}
+
+body {
+  background: var(--hm-ground);
+  color: var(--hm-ink);
+  font-family: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Lora, Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Doi mau chu dao cua Bootstrap tu xanh duong sang mau mun */
+.btn-primary {
+  background-color: var(--hm-plum);
+  border-color: var(--hm-plum);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--hm-plum-dark);
+  border-color: var(--hm-plum-dark);
+}
+.btn-outline-primary {
+  color: var(--hm-plum);
+  border-color: var(--hm-plum);
+}
+.btn-outline-primary:hover {
+  background-color: var(--hm-plum);
+  border-color: var(--hm-plum);
+}
+a {
+  color: var(--hm-plum);
+}
+a:hover {
+  color: var(--hm-plum-dark);
+}
+.bg-primary {
+  background-color: var(--hm-plum) !important;
+}
+
+/* % tuong dong: xanh dam, khac han mau thuong hieu de so noi bat */
+.badge.text-bg-success {
+  background-color: var(--hm-green-soft) !important;
+  color: var(--hm-green) !important;
+  border: 1px solid #BFDCD2;
+}
+
+.card {
+  border-color: var(--hm-rule);
+  border-radius: 10px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--hm-plum);
+  box-shadow: 0 0 0 0.2rem rgba(107, 45, 91, 0.15);
+}
+
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid var(--hm-rule);
+}
+
+.text-secondary {
+  color: var(--hm-ink-2) !important;
+}
+
+/* Phim Tab phai thay duoc dang o dau - de truy cap bang ban phim */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--hm-plum);
+  outline-offset: 2px;
+}
